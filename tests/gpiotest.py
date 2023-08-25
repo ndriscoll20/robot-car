@@ -28,12 +28,12 @@ GPIO.output(27,0)
 GPIO.output(22,0)
 
 #  turn right motor forward
-GPIO.output(27,0)
-GPIO.output(22,1)
+GPIO.output(22,0)
+GPIO.output(27,1)
 
 #  turn left motor forward
-GPIO.output(23,0)
-GPIO.output(24,1)
+GPIO.output(24,0)
+GPIO.output(23,1)
 
 time.sleep(1)
 

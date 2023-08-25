@@ -7,16 +7,18 @@ GPIO.setmode (GPIO.BCM)
 GPIO.setwarnings (False)
 
 class Motor:
-    def __init__ (self, pinFwd, pinBack, frequency=20, maxSpeed=100):
+    def __init__ (self, pinFwd, pinBack, pinPwm, frequency=100, maxSpeed=100):
         #  Configure GPIO
-        GPIO.setup (pinFwd,  GPIO.OUT)
-        GPIO.setup (pinBack, GPIO.OUT)
+        GPIO.setup(pinFwd,  GPIO.OUT)
+        GPIO.setup(pinBack, GPIO.OUT)
+        GPIO.setup(pinPwm, GPIO.OUT)
 
         #  get a handle to PWM
         self._frequency = frequency
         self._maxSpeed = maxSpeed
-        self._pwmFwd  = GPIO.PWM (pinFwd,  frequency)
-        self._pwmBack = GPIO.PWM (pinBack, frequency)
+        self._Fwd  = pinFwd
+        self._Back = pinBack
+        self._pwm = GPIO.PWM(pinPwm, frequency)
         self.stop()
 
     def forwards (self, speed):
@@ -37,16 +39,18 @@ class Motor:
 
         #  turn on the motors
         if speed < 0:
-            self._pwmFwd.start(0)
-            self._pwmBack.start(-speed)
+            GPIO.output(self._Fwd, 0)
+            GPIO.output(self._Back, 1)
+            self._pwm.start(-speed)
         else:
-            self._pwmFwd.start(speed)
-            self._pwmBack.start(0)
+            GPIO.output(self._Fwd, 1)
+            GPIO.output(self._Back, 0)
+            self._pwm.start(speed)
 
 class Wheelie:
     def __init__ (self):
-        self.rightWheel = Motor (10, 9)
-        self.leftWheel = Motor (8, 7)
+        self.rightWheel = Motor(22, 27, 17)
+        self.leftWheel = Motor(24, 23, 25)
 
     def stop (self):
         self.leftWheel.stop()
