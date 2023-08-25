@@ -22,18 +22,18 @@ pL.start(40)
 pR.start(40)
 
 #  turn motors off
-GPIO.output(7,0)
-GPIO.output(8,0)
-GPIO.output(9,0)
-GPIO.output(10,0)
+GPIO.output(24,0)
+GPIO.output(23,0)
+GPIO.output(27,0)
+GPIO.output(22,0)
 
 #  turn right motor forward
-GPIO.output(7,0)
-GPIO.output(8,1)
+GPIO.output(27,0)
+GPIO.output(22,1)
 
 #  turn left motor forward
-GPIO.output(9,0)
-GPIO.output(10,1)
+GPIO.output(23,0)
+GPIO.output(24,1)
 
 time.sleep(1)
 
