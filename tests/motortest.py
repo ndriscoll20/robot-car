@@ -21,7 +21,7 @@ class Motor:
         self._pwm = GPIO.PWM(pinPwm, frequency)
         self.stop()
 
-    def forwards (self, speed):
+    def forward (self, speed):
         self._move (speed)
 
     def backwards (self, speed):
@@ -49,39 +49,39 @@ class Motor:
 
 class Wheelie:
     def __init__ (self):
-        self.rightWheel = Motor(22, 27, 17)
-        self.leftWheel = Motor(24, 23, 25)
+        self.rightWheel = Motor(27, 22, 17)
+        self.leftWheel = Motor(23, 24, 25)
 
     def stop (self):
         self.leftWheel.stop()
         self.rightWheel.stop()
 
     def goForward (self, speed = 100):
-        self.rightWheel.forwards (speed)
-        self.leftWheel.forwards (speed)
+        self.rightWheel.forward (speed)
+        self.leftWheel.forward (speed)
 
     def goBackward (self, speed = 100):
         self.rightWheel.backwards (speed)
         self.leftWheel.backwards (speed)
 
     def goLeft (self, speed = 100):
-        self.rightWheel.backwards (speed)
-        self.leftWheel.forwards (speed)
+        self.rightWheel.forward (speed)
+        self.leftWheel.backwards (speed)
 
     def goRight (self, speed = 100):
-        self.rightWheel.forwards (speed)
-        self.leftWheel.backwards (speed)
+        self.rightWheel.backwards (speed)
+        self.leftWheel.forward (speed)
 
 def main():
     wheelie = Wheelie()
     wheelie.goForward()
-    time.sleep(1)
+    time.sleep(2)
     wheelie.goLeft()
-    time.sleep(1)
+    time.sleep(2)
     wheelie.goBackward(50)
-    time.sleep(1)
+    time.sleep(2)
     wheelie.goRight()
-    time.sleep(1)
+    time.sleep(2)
     wheelie.stop()
     GPIO.cleanup()
 

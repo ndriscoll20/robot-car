@@ -10,19 +10,21 @@ GPIO.setmode (GPIO.BCM)
 GPIO.setwarnings (False)
 
 class Motor:
-    def __init__ (self, pinFwd, pinBack, frequency=20, maxSpeed=100):
+    def __init__ (self, pinFwd, pinBack, pinPwm, frequency=100, maxSpeed=100):
         #  Configure GPIO
-        GPIO.setup (pinFwd,  GPIO.OUT)
-        GPIO.setup (pinBack, GPIO.OUT)
+        GPIO.setup(pinFwd,  GPIO.OUT)
+        GPIO.setup(pinBack, GPIO.OUT)
+        GPIO.setup(pinPwm, GPIO.OUT)
 
         #  get a handle to PWM
         self._frequency = frequency
         self._maxSpeed = maxSpeed
-        self._pwmFwd  = GPIO.PWM (pinFwd,  frequency)
-        self._pwmBack = GPIO.PWM (pinBack, frequency)
+        self._Fwd  = pinFwd
+        self._Back = pinBack
+        self._pwm = GPIO.PWM(pinPwm, frequency)
         self.stop()
 
-    def forwards (self, speed):
+    def forward (self, speed):
         self.move (speed)
 
     def backwards (self, speed):
@@ -40,24 +42,26 @@ class Motor:
 
         #  turn on the motors
         if speed < 0:
-            self._pwmFwd.start(0)
-            self._pwmBack.start(-speed)
+            GPIO.output(self._Fwd, 0)
+            GPIO.output(self._Back, 1)
+            self._pwm.start(-speed)
         else:
-            self._pwmFwd.start(speed)
-            self._pwmBack.start(0)
+            GPIO.output(self._Fwd, 1)
+            GPIO.output(self._Back, 0)
+            self._pwm.start(speed)
 
 class Wheelie:
     def __init__ (self):
-        self.rightWheel = Motor (10, 9)
-        self.leftWheel = Motor (8, 7)
+        self.rightWheel = Motor (27, 22, 17)
+        self.leftWheel = Motor (23, 24, 25)
 
     def stop (self):
         self.leftWheel.stop()
         self.rightWheel.stop()
 
     def goForward (self, speed = 100):
-        self.rightWheel.forwards (speed)
-        self.leftWheel.forwards (speed)
+        self.rightWheel.forward (speed)
+        self.leftWheel.forward (speed)
 
     def goBackward (self, speed = 100):
         self.rightWheel.backwards (speed)
@@ -65,10 +69,10 @@ class Wheelie:
 
     def goLeft (self, speed = 100):
         self.rightWheel.backwards (speed)
-        self.leftWheel.forwards (speed)
+        self.leftWheel.forward (speed)
 
     def goRight (self, speed = 100):
-        self.rightWheel.forwards (speed)
+        self.rightWheel.forward (speed)
         self.leftWheel.backwards (speed)
 
 class MinimalSubscriber(Node):
@@ -81,8 +85,10 @@ class MinimalSubscriber(Node):
             10)
         self.subscription  # prevent unused variable warning
         self.wheelie = Wheelie()
+        print('Wheelie Class Started')
 
     def listener_callback(self, msg):
+        print('Received Message', msg.data)
         command = msg.data
         if command == 'forward':
             print('Moving forward')
@@ -109,6 +115,7 @@ def main(args=None):
     minimal_subscriber = MinimalSubscriber()
 
     #  wait for incoming commands
+    print('Initialized, waiting for command')
     rclpy.spin(minimal_subscriber)
 
     #  Interrupt detected, shut down
