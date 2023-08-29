@@ -53,12 +53,18 @@ class Wheelie (Node):
         pinRightRev : int
             The RaspPi GPIO pin that goes high to create reverse motion
             on the right wheel
+        pinRightPwm : int
+            The RaspPi GPIO pin that controls the speed of the right 
+            motor using pulse width modulation
         pinLeftFwd : int
             The RaspPi GPIO pin that goes high to create forward motion
             on the right wheel
         pinLeftRev : int
             The RaspPi GPIO pin that goes high to create reverse motion
             on the right wheel
+        pinLeftPwm : int
+            The RaspPi GPIO pin that controls the speed of the left
+            motor using pulse width modulation
         wheel_diameter : float
             The diameter of the wheels in meters
         wheel_base : float
@@ -160,9 +166,9 @@ class Wheelie (Node):
             self.stop()
 
     def _joy_callback(self, msg):
-        '''Translate XBox buttons into speed and spin
+        '''Translate Xbox buttons into speed and spin
 
-        Just use the left joystick (for now):
+        Left joystick controls:
         LSB left/right  axes[0]     +1 (left) to -1 (right)
         LSB up/down     axes[1]     +1 (up) to -1 (back)
         LB              buttons[5]  1 pressed, 0 otherwise
@@ -196,9 +202,7 @@ class Wheelie (Node):
     def _set_motor_speeds(self):
         # TODO: inject a stop() if no speeds seen for a while
         #
-        # Scary math ahead.
-        #
-        # First figure out the speed of each wheel based on spin: each wheel
+        # Calculate the speed of each wheel based on spin: each wheel
         # covers self._wheel_base meters in one radian, so the target speed
         # for each wheel in meters per sec is spin (radians/sec) times
         # wheel_base divided by wheel_diameter
@@ -249,15 +253,19 @@ def main(args=None):
 
     w = Wheelie('wheelie', pinRightFwd=27, pinRightRev=22, pinRightPwm=17,
                 pinLeftFwd=23, pinLeftRev=24, pinLeftPwm=25, 
-                left_max_rpm=195, right_max_rpm=202)
+                left_max_rpm=190, right_max_rpm=202)
 
+    # initialize steps: 
+    # make sure to source /opt/ros/iron/setup.bash
+    # ensure that ROS_DOMAIN matches on ubuntu and pi
+    #
     # enable the keyboard controller:
     # ros2 run teleop_twist_keyboard teleop_twist_keyboard
     #
     # enable the joystick:
     # ros2 run joy joy_node
     #
-    print("Spinning.")
+    print("Spinning...")
     rclpy.spin(w)
     rclpy.shutdown()
 

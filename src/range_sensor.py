@@ -4,9 +4,8 @@ import RPi.GPIO as GPIO
 import time
 import math
 
-pinTrigger = 17
-pinEcho = 18
-
+pinTrigger = 20
+pinEcho = 21
 
 class UltrasonicDistanceSensor:
     '''An HC-SR04 Ultrasonic Range Sensor

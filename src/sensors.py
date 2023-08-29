@@ -71,8 +71,8 @@ class Sensors (Node):
 def main(args=None):
 
     rclpy.init (args=args)
-    s = Sensors("range", pinTrigger = 17, pinEcho = 18)
-    print ("Spinning.")
+    s = Sensors("range", pinTrigger = 20, pinEcho = 21)
+    print ("Sensing...")
     rclpy.spin (s)
     rclpy.shutdown()
 
